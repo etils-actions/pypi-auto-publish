@@ -17,6 +17,7 @@ runs:
   using: "composite"
   steps:
     - run: pip install packaging
+      shell: bash
 
     # Extract current local `__version__`
     # Output: `local-version.outputs.version`
@@ -24,11 +25,13 @@ runs:
       run: |
         VERSION=$(python -c "import {{ inputs.module-name }} ; print({{ inputs.module-name }}.__version__)")
         echo ::set-output name=version::${VERSION}
+      shell: bash
 
     # Extract current `pip version`
     # Output: `pip-version.outputs.version`
     - id: pip-version
       run: python src/get_pypi_version.py {{ inputs.module-name }} --github_action_output_name=version
+      shell: bash
 
     # Check if local `__version__` < pip version
     # Output: `compare-version.outputs.should-release`
@@ -37,6 +40,7 @@ runs:
         python src/compare_version.py \
           --local_version=${{ steps.local-version.outputs.version }} \
           --pypi_version=${{ steps.pip-version.outputs.version }}
+      shell: bash
 
     # Publish the package (if local `__version__` < pip version)
     - if: steps.compare-version.outputs.should-release == 'true'
