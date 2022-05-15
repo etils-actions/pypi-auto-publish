@@ -80,9 +80,9 @@ def find_pkg_name() -> str:
     return dist.name
 
 
-def get_local_version(module_name: str) -> str:
+def get_local_version(pkg_name: str) -> str:
     """Returns the local version."""
-    return importlib.metadata.version(module_name)
+    return importlib.metadata.version(pkg_name)
 
 
 # PyPI
