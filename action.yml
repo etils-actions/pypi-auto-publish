@@ -15,6 +15,9 @@ inputs:
   pypi-token:
     description: 'Token of the PyPI account publishing the project.'
     required: true
+  gh-token:
+    description: 'Github token. Required to trigger the release.'
+    required: false
 
 runs:
   using: "composite"
@@ -62,3 +65,4 @@ runs:
       with:
         commit: ${{ github.sha }}
         tag: v${{ steps.compare-version.outputs.version }}
+        token: ${{ inputs.gh-token }}
