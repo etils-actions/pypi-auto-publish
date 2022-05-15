@@ -56,9 +56,9 @@ runs:
     # TODO(epot):
     # * Auto set the body
     # * Skip release if `inputs.release=False`
+    #     token: ${{ secrets.GITHUB_TOKEN }}
     - if: steps.compare-version.outputs.should-release == 'true'
       uses: ncipollo/release-action@v1
       with:
         commit: ${{ github.sha }}
         tag: v${{ steps.compare-version.outputs.version }}
-        token: ${{ secrets.GITHUB_TOKEN }}
