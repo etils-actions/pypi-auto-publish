@@ -9,6 +9,9 @@ inputs:
   pkg-name:
     description: 'Name of the PyPI package (optional).'
     required: false
+  release:
+    description: 'Whether to trigger a GitHub release.'
+    required: false
   pypi-token:
     description: 'Token of the PyPI account publishing the project.'
     required: true
@@ -49,3 +52,13 @@ runs:
       uses: etils-actions/pypi-build-publish@v1
       with:
         pypi-token: ${{ inputs.pypi-token }}
+
+    # TODO(epot):
+    # * Auto set the body
+    # * Skip release if `inputs.release=False`
+    - if: steps.compare-version.outputs.should-release == 'true'
+      uses: ncipollo/release-action@v1
+      with:
+        commit: ${{ github.sha }}
+        tag: v${{ steps.compare-version.outputs.version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
