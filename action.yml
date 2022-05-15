@@ -29,12 +29,12 @@ runs:
       run: |
         python ${{github.action_path}}/src/compare_version.py \
           --module_name="${{ inputs.module-name }}" \
-          --pkg_name="${{ inputs.pkg-name }}" \
+          --pkg_name="${{ inputs.pkg-name }}"
       shell: bash
 
-    - run: >
-        echo 
-          version=${{ steps.compare-version.outputs.version }}
+    - run: |
+        echo \
+          version=${{ steps.compare-version.outputs.version }} \
           should-release=${{ steps.compare-version.outputs.should-release }}
       shell: bash
 
