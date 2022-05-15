@@ -12,7 +12,9 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import os
 import ssl
+import sys
 import urllib.request
 from typing import Optional, Union
 
@@ -41,10 +43,11 @@ def main():
     module_name = args.module_name
     pkg_name = args.pkg_name
 
-    if not pkg_name:
-        pkg_name = module_name
+    # Add the directory containing the local module to the path
+    sys.path.append(os.getcwd())
 
-    # TODO(epot): Normalize if pkg name is missing
+    if not pkg_name:  # pkg name and module names should match if missing
+        pkg_name = module_name
 
     local_version = get_local_version(module_name)
     pypi_version = get_pypi_version(pkg_name)
