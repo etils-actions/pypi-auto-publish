@@ -56,11 +56,12 @@ def main():
         pypi_version = local_version
         local_version = "0.0.0"
 
+    set_output("version", pypi_version)
+
     local_version = packaging.version.Version(local_version)
     pypi_version = packaging.version.Version(pypi_version)
     should_release = local_version > pypi_version
     set_output("should-release", should_release)
-    set_output("version", pypi_version)
 
 
 # Local
