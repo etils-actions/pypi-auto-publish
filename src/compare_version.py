@@ -113,7 +113,7 @@ def get_pypi_versions(pkg_name: str) -> list[str]:
 def set_output(name: str, value: _Value) -> None:
     """Set github action output."""
     value = _normalize_value(value)
-    return f"::set-output name={name}::{value}"
+    print(f"::set-output name={name}::{value}")
 
 
 def _normalize_value(value: _Value) -> str:
