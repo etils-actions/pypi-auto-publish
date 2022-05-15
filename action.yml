@@ -22,19 +22,14 @@ runs:
     - run: pip install packaging
       shell: bash
 
-    - run: |
-        echo ${{github.action_path}}
-        ls ${{github.action_path}}
-      shell: bash
-
     # Get the local and PyPI versions
     # Check if local `__version__` < pip version
     # Output: `compare-version.outputs.should-release`
     - id: compare-version
       run: |
         python ${{github.action_path}}/src/compare_version.py \
-          --module_name {{ inputs.module-name }} \
-          --pkg_name {{ inputs.pkg-name }} \
+          --module_name ${{ inputs.module-name }} \
+          --pkg_name ${{ inputs.pkg-name }} \
       shell: bash
 
     # Publish the package (if local `__version__` < pip version)
