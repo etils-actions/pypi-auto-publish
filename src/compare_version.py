@@ -26,11 +26,11 @@ def parse_arguments() -> argparse.Namespace:
     """Parse CLI arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "module_name",
+        "--module_name",
         help="Package to search.",
     )
     parser.add_argument(
-        "pkg_name",
+        "--pkg_name",
         help="Package to search.",
     )
     return parser.parse_args()
