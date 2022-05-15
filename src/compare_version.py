@@ -16,7 +16,7 @@ import os
 import ssl
 import sys
 import urllib.request
-from typing import Optional, Union
+from typing import Union
 
 import packaging.version
 
@@ -39,12 +39,12 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def main():
+    # Add the directory containing the local module to the path
+    sys.path.append(os.getcwd())
+
     args = parse_arguments()
     module_name = args.module_name
     pkg_name = args.pkg_name
-
-    # Add the directory containing the local module to the path
-    sys.path.append(os.getcwd())
 
     if not pkg_name:  # pkg name and module names should match if missing
         pkg_name = module_name
@@ -52,16 +52,11 @@ def main():
     local_version = get_local_version(module_name)
     pypi_version = get_pypi_version(pkg_name)
 
-    if pypi_version is None:  # No PyPI release yet
-        pypi_version = local_version
-        local_version = "0.0.0"
-
-    set_output("version", pypi_version)
+    set_output("version", local_version)
 
     local_version = packaging.version.Version(local_version)
     pypi_version = packaging.version.Version(pypi_version)
-    should_release = local_version > pypi_version
-    set_output("should-release", should_release)
+    set_output("should-release", local_version > pypi_version)
 
 
 # Local
@@ -76,13 +71,13 @@ def get_local_version(module_name: str) -> str:
 # PyPI
 
 
-def get_pypi_version(pkg_name: str) -> Optional[str]:
+def get_pypi_version(pkg_name: str) -> str:
     """Returns the last version."""
     all_versions = get_pypi_versions(pkg_name)
     if all_versions:
         return all_versions[-1]
-    else:
-        return None
+    else:  # No PyPI release yet
+        return "0.0.0"
 
 
 def get_pypi_versions(pkg_name: str) -> list[str]:
