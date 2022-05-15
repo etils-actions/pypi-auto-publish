@@ -10,7 +10,7 @@ Outputs:
 from __future__ import annotations
 
 import argparse
-import importlib
+import importlib.metadata
 import json
 import os
 import ssl
@@ -28,10 +28,6 @@ def parse_arguments() -> argparse.Namespace:
     """Parse CLI arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--module_name",
-        help="Package to search.",
-    )
-    parser.add_argument(
         "--pkg_name",
         help="Package to search.",
     )
@@ -43,13 +39,12 @@ def main():
     sys.path.append(os.getcwd())
 
     args = parse_arguments()
-    module_name = args.module_name
     pkg_name = args.pkg_name
 
     if not pkg_name:  # pkg name and module names should match if missing
-        pkg_name = module_name
+        pkg_name = find_pkg_name()
 
-    local_version = get_local_version(module_name)
+    local_version = get_local_version(pkg_name)
     pypi_version = get_pypi_version(pkg_name)
 
     set_output("version", local_version)
@@ -62,10 +57,32 @@ def main():
 # Local
 
 
+def _is_editable(dist: importlib.metadata.PathDistribution) -> bool:
+    all_pth = [f for f in dist.files if f.name.endswith(".pth")]
+    if len(all_pth) != 1:  # Might be edge case if >1, unsure if possible
+        return False
+    (pth_file,) = all_pth
+    content = pth_file.read_text()
+    if content.startswith("/"):  # TODO: To delete
+        print(content)
+    # Here, should check with github action path
+    return content.startswith("/")
+
+
+def find_pkg_name() -> str:
+    dists = [dist for dist in importlib.metadata.distributions() if _is_editable(dist)]
+    if len(dists) != 1:
+        names = [d.name for d in dists]
+        raise ValueError(
+            f"Could not auto-infer the package name: {names}. Please open an issue."
+        )
+    (dist,) = dists
+    return dist.name
+
+
 def get_local_version(module_name: str) -> str:
     """Returns the local version."""
-    module = importlib.import_module(module_name)
-    return module.__version__
+    return importlib.metadata.version(module_name)
 
 
 # PyPI

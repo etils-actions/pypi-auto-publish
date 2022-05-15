@@ -6,11 +6,8 @@ branding:
   color: orange
 
 inputs:
-  module-name:
-    description: 'The name of the module to import.'
-    required: true
   pkg-name:
-    description: 'Name of the PyPI package.'
+    description: 'Name of the PyPI package (optional).'
     required: false
   pypi-token:
     description: 'Token of the PyPI account publishing the project.'
@@ -19,6 +16,16 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v2
+
+    # Setup Python
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+  
+    - run: pip install -e .
+      shell: bash
+  
     - run: pip install packaging
       shell: bash
 
@@ -28,7 +35,6 @@ runs:
     - id: compare-version
       run: |
         python ${{github.action_path}}/src/compare_version.py \
-          --module_name="${{ inputs.module-name }}" \
           --pkg_name="${{ inputs.pkg-name }}"
       shell: bash
 
