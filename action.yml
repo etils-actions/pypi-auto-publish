@@ -28,8 +28,8 @@ runs:
     - id: compare-version
       run: |
         python ${{github.action_path}}/src/compare_version.py \
-          --module_name ${{ inputs.module-name }} \
-          --pkg_name ${{ inputs.pkg-name }} \
+          --module_name="${{ inputs.module-name }}" \
+          --pkg_name="${{ inputs.pkg-name }}" \
       shell: bash
 
     # Publish the package (if local `__version__` < pip version)

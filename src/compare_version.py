@@ -41,7 +41,8 @@ def main():
     module_name = args.module_name
     pkg_name = args.pkg_name
 
-    print(module_name, pkg_name)
+    if not pkg_name:
+        pkg_name = module_name
 
     # TODO(epot): Normalize if pkg name is missing
 
