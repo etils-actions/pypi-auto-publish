@@ -27,7 +27,7 @@ jobs:
       contents: write
 
     steps:
-    - uses: etils-actions/pypi-auto-publish@main
+    - uses: etils-actions/pypi-auto-publish@v1
       with:
         pypi-token: ${{ secrets.PYPI_API_TOKEN }}
         gh-token: ${{ secrets.GITHUB_TOKEN }}
