@@ -37,8 +37,6 @@ You can also chain this job with your unittests to only trigger release if tests
 
 ## Inputs
 
-Authorization tokens:
-
 * `pypi-token`: The PyPI token to publish the package. If missing, PyPI release is skipped.
 * `gh-token`: GitHub action token. If missing, GitHub release is skipped.
 * `release-body` (Optional): GitHub release text
