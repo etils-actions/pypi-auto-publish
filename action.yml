@@ -58,12 +58,9 @@ runs:
       with:
         pypi-token: ${{ inputs.pypi-token }}
 
-    # TODO(epot):
-    # * Auto set the body
-    # * Skip release if `inputs.release=False`
-    #     token: ${{ secrets.GITHUB_TOKEN }}
+    # TODO(epot): Auto set the body
     - if: |
-        inputs.release-body
+        inputs.gh-token
         && steps.compare-version.outputs.should-release == 'true'
       uses: ncipollo/release-action@v1
       with:
