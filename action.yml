@@ -6,17 +6,17 @@ branding:
   color: orange
 
 inputs:
+  pypi-token:
+    description: 'Token of the PyPI account publishing the project. If missing, PyPI release is skipped.'
+    required: false
+  gh-token:
+    description: 'Github action token. If missing, GitHub release is skipped.'
+    required: false
+  release-body:
+    description: 'Github action token. If missing, GitHub release is skipped.'
+    required: false
   pkg-name:
     description: 'Name of the PyPI package (optional).'
-    required: false
-  release:
-    description: 'Whether to trigger a GitHub release.'
-    required: false
-  pypi-token:
-    description: 'Token of the PyPI account publishing the project.'
-    required: true
-  gh-token:
-    description: 'Github token. Required to trigger the release.'
     required: false
 
 runs:
@@ -51,7 +51,9 @@ runs:
       shell: bash
 
     # Publish the package (if local `__version__` < pip version)
-    - if: steps.compare-version.outputs.should-release == 'true'
+    - if: |
+        inputs.pypi-token
+        && steps.compare-version.outputs.should-release == 'true'
       uses: etils-actions/pypi-build-publish@v1
       with:
         pypi-token: ${{ inputs.pypi-token }}
@@ -60,9 +62,12 @@ runs:
     # * Auto set the body
     # * Skip release if `inputs.release=False`
     #     token: ${{ secrets.GITHUB_TOKEN }}
-    - if: steps.compare-version.outputs.should-release == 'true'
+    - if: |
+        inputs.release-body
+        && steps.compare-version.outputs.should-release == 'true'
       uses: ncipollo/release-action@v1
       with:
         commit: ${{ github.sha }}
         tag: v${{ steps.compare-version.outputs.version }}
         token: ${{ inputs.gh-token }}
+        body: ${{ inputs.release-body }}
