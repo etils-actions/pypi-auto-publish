@@ -1,6 +1,6 @@
-name: 'Build & auto-publish to PyPI'
+name: 'Auto PyPI release'
 author: 'Conchylicultor'
-description: 'Build & publish to PyPI when `my_module.__version__` is increased'
+description: 'Trigger a PyPI and GitHub release everytime the package version is increased.'
 branding:
   icon: upload-cloud
   color: orange

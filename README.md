@@ -7,7 +7,7 @@ This support any [PEP 518](https://www.python.org/dev/peps/pep-0518/) compliant 
 This action:
 
 * Auto-detect when the package version is increased (in the `pyproject.toml`, `module.__version__` when using flit, `setup`,...)
-* Trigger a PyPI release of the project
+* Trigger a PyPI release of the project (build and publish)
 * Create the associated tag (e.g. `v1.0.0`) and GitHub release.
 
 Example of usage:
