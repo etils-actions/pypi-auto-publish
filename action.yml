@@ -1,6 +1,6 @@
-name: 'Auto PyPI release'
+name: 'PyPI & GitHub auto-release'
 author: 'Conchylicultor'
-description: 'Trigger a PyPI and GitHub release everytime the package version is increased.'
+description: 'Auto-detect version increase, build and publish PyPI, tag and release on GitHub.'
 branding:
   icon: upload-cloud
   color: orange
@@ -12,9 +12,11 @@ inputs:
   gh-token:
     description: 'Github action token. If missing, GitHub release is skipped.'
     required: false
-  release-body:
-    description: 'Github action token. If missing, GitHub release is skipped.'
+  parse-changelog:
+    description: 'Parse the `CHANGELOG.md` (`keep a changelog`
+ format).'
     required: false
+    default: false
   pkg-name:
     description: 'Name of the PyPI package (optional).'
     required: false
@@ -45,9 +47,8 @@ runs:
       shell: bash
 
     - run: |
-        echo \
-          version=${{ steps.compare-version.outputs.version }} \
-          should-release=${{ steps.compare-version.outputs.should-release }}
+        echo version=${{ steps.compare-version.outputs.version }}
+        echo should-release=${{ steps.compare-version.outputs.should-release }}
       shell: bash
 
     # Publish the package (if local `__version__` < pip version)
@@ -58,7 +59,20 @@ runs:
       with:
         pypi-token: ${{ inputs.pypi-token }}
 
-    # TODO(epot): Auto set the body
+    # TODO(epot):
+    # * Could hardcode the version
+    # * Could auto-detect changelog and format ?
+    - if: |
+        inputs.parse-changelog == 'true'
+        && steps.compare-version.outputs.should-release == 'true'
+      id: changelog
+      uses: mindsers/changelog-reader-action@v2
+
+    - if: steps.compare-version.outputs.should-release == 'true'
+      run: |
+        echo release-body=${{ steps.changelog.outputs.changes }}
+      shell: bash
+
     - if: |
         inputs.gh-token
         && steps.compare-version.outputs.should-release == 'true'
@@ -67,4 +81,4 @@ runs:
         commit: ${{ github.sha }}
         tag: v${{ steps.compare-version.outputs.version }}
         token: ${{ inputs.gh-token }}
-        body: ${{ inputs.release-body }}
+        body: ${{ steps.changelog.outputs.changes }}
