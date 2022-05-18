@@ -68,9 +68,12 @@ runs:
       id: changelog
       uses: mindsers/changelog-reader-action@v2
 
+    # Use env indirection to support multi-lines variable
     - if: steps.compare-version.outputs.should-release == 'true'
       run: |
-        echo release-body=${{ steps.changelog.outputs.changes }}
+        echo "release-body=$RELEASE_BODY"
+      env:
+        RELEASE_BODY: ${{ steps.changelog.outputs.changes }}
       shell: bash
 
     - if: |
