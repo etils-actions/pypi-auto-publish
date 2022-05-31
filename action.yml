@@ -9,6 +9,7 @@ inputs:
   pypi-token:
     description: 'Token of the PyPI account publishing the project. If missing, PyPI release is skipped.'
     required: false
+    default: 'skip'  # Use sentinel value to error if user forgot to set the GitHub secret
   gh-token:
     description: 'Github action token. If missing, GitHub release is skipped.'
     required: false
@@ -53,7 +54,7 @@ runs:
 
     # Publish the package (if local `__version__` < pip version)
     - if: |
-        inputs.pypi-token
+        inputs.pypi-token != 'skip'
         && steps.compare-version.outputs.should-release == 'true'
       uses: etils-actions/pypi-build-publish@v1
       with:
