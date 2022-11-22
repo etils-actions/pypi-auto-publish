@@ -125,7 +125,9 @@ def get_pypi_versions(pkg_name: str) -> list[str]:
 def set_output(name: str, value: _Value) -> None:
     """Set github action output."""
     value = _normalize_value(value)
-    print(f"::set-output name={name}::{value}")
+
+    with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+        print(f'{name}={value}', file=f)
 
 
 def _normalize_value(value: _Value) -> str:
