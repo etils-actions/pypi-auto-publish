@@ -21,11 +21,18 @@ inputs:
   pkg-name:
     description: 'Name of the PyPI package (optional).'
     required: false
+  git-ref:
+    description: 'Git ref (e.g. SHA or tag) (optional).'
+    required: false
+    default: ''  # Use 'skip' to skip repository checkout
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v3
+    - if: inputs.git-ref != 'skip'
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.git-ref }}
 
     # Setup Python
     - uses: actions/setup-python@v4
