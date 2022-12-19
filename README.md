@@ -44,6 +44,8 @@ You can also chain this job with your unittests to only trigger release if tests
 * `parse-changelog`: If `true`, extract GitHub release notes from the `CHANGELOG.md` (assuming [keep a changelog
 ](https://keepachangelog.com/) format)
 * `pkg-name` (Optional): Package name (auto-detected).
+* `git-ref` (Optional): Git ref (e.g. SHA or tag). If `skip`, the repository is
+  not checked out. 
 
 ## Outputs
 
