@@ -43,10 +43,12 @@ You can also chain this job with your unittests to only trigger release if tests
 * `gh-token`: GitHub action token. If missing, GitHub release is skipped.
 * `parse-changelog`: If `true`, extract GitHub release notes from the `CHANGELOG.md` (assuming [keep a changelog
 ](https://keepachangelog.com/) format)
+* `path` (Optional): Directory of the project (containing the `pyproject.toml`). Default to `.`.
 * `pkg-name` (Optional): Package name (auto-detected).
 * `git-ref` (Optional): Git ref (e.g. SHA or tag). If `git-ref: skip`, the repository is
   not checked out (this can be used to manually checkout and update the repo before publishing).
 
 ## Outputs
 
-None.
+* `version`: The detected version of the project (e.g. `'1.0.0'`)
+* `is-released`: Whether a new release was triggered (`'true'` / `'false'`)

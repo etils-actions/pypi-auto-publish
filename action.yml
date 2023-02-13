@@ -1,6 +1,6 @@
-name: 'PyPI & GitHub auto-release'
+name: 'Python auto-release (PyPI & GitHub)'
 author: 'Conchylicultor'
-description: 'Auto-detect version increase, build and publish PyPI, tag and release on GitHub.'
+description: 'Auto-detect version increase, build and publish PyPI, tag and release on GitHub, parse `CHANGELOG.md`.'
 branding:
   icon: upload-cloud
   color: orange
@@ -21,10 +21,22 @@ inputs:
   pkg-name:
     description: 'Name of the PyPI package (optional).'
     required: false
+  path:
+    description: 'Root directory of the project (containing the `pyproject.toml`).'
+    default: '.'
+    required: false
   git-ref:
     description: 'Git ref (e.g. SHA or tag) (optional).'
     required: false
     default: ''  # Use 'skip' to skip repository checkout
+
+outputs:
+  version:
+    description: "Local project version detected (e.g. `'1.0.0'`)"
+    value: ${{ steps.compare-version.outputs.version }}
+  is-released:
+    description: "Whether a new release was triggered (`'true'` / `'false'`)"
+    value: ${{ steps.compare-version.outputs.should-release }}
 
 runs:
   using: "composite"
@@ -41,9 +53,11 @@ runs:
   
     - run: pip install -e .
       shell: bash
+      working-directory: ${{ inputs.path }}
   
     - run: pip install packaging
       shell: bash
+      working-directory: ${{ inputs.path }}
 
     # Get the local and PyPI versions
     # Check if local `__version__` < pip version
@@ -53,11 +67,13 @@ runs:
         python ${{github.action_path}}/src/compare_version.py \
           --pkg_name="${{ inputs.pkg-name }}"
       shell: bash
+      working-directory: ${{ inputs.path }}
 
     - run: |
         echo version=${{ steps.compare-version.outputs.version }}
         echo should-release=${{ steps.compare-version.outputs.should-release }}
       shell: bash
+      working-directory: ${{ inputs.path }}
 
     # Publish the package (if local `__version__` < pip version)
     - if: |
@@ -66,6 +82,7 @@ runs:
       uses: etils-actions/pypi-build-publish@v1
       with:
         pypi-token: ${{ inputs.pypi-token }}
+        path: ${{ inputs.path }}
 
     # TODO(epot):
     # * Could hardcode the version
@@ -75,6 +92,8 @@ runs:
         && steps.compare-version.outputs.should-release == 'true'
       id: changelog
       uses: mindsers/changelog-reader-action@v2
+      with:
+        path: ${{ inputs.path }}/CHANGELOG.md
 
     # Use env indirection to support multi-lines variable
     - if: steps.compare-version.outputs.should-release == 'true'

@@ -70,6 +70,8 @@ def _is_editable(dist: importlib.metadata.PathDistribution) -> bool:
 
 
 def find_pkg_name() -> str:
+    # This is quite fragile. It would be best to dynamically extract the project name from
+    # PEP 517 util (maybe from the dist/, wheel or similar ?)
     dists = [dist for dist in importlib.metadata.distributions() if _is_editable(dist)]
     if len(dists) != 1:
         names = [d.name for d in dists]
@@ -126,8 +128,8 @@ def set_output(name: str, value: _Value) -> None:
     """Set github action output."""
     value = _normalize_value(value)
 
-    with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-        print(f'{name}={value}', file=f)
+    with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+        print(f"{name}={value}", file=f)
 
 
 def _normalize_value(value: _Value) -> str:
