@@ -75,6 +75,19 @@ runs:
       shell: bash
       working-directory: ${{ inputs.path }}
 
+    # TODO(epot):
+    # * Could hardcode the version
+    # * Could auto-detect changelog and format ?
+    # Parse changelog before, so if there's failure, we don't end up
+    # in a bad state where PyPI is published but not GitHub
+    - if: |
+        inputs.parse-changelog == 'true'
+        && steps.compare-version.outputs.should-release == 'true'
+      id: changelog
+      uses: mindsers/changelog-reader-action@v2
+      with:
+        path: ${{ inputs.path }}/CHANGELOG.md
+
     # Publish the package (if local `__version__` < pip version)
     - if: |
         inputs.pypi-token != 'skip'
@@ -83,17 +96,6 @@ runs:
       with:
         pypi-token: ${{ inputs.pypi-token }}
         path: ${{ inputs.path }}
-
-    # TODO(epot):
-    # * Could hardcode the version
-    # * Could auto-detect changelog and format ?
-    - if: |
-        inputs.parse-changelog == 'true'
-        && steps.compare-version.outputs.should-release == 'true'
-      id: changelog
-      uses: mindsers/changelog-reader-action@v2
-      with:
-        path: ${{ inputs.path }}/CHANGELOG.md
 
     # Use env indirection to support multi-lines variable
     - if: steps.compare-version.outputs.should-release == 'true'
