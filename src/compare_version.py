@@ -63,10 +63,11 @@ def _is_editable(dist: importlib.metadata.PathDistribution) -> bool:
         return False
     (pth_file,) = all_pth
     content = pth_file.read_text()
-    if content.startswith("/"):  # TODO: To delete
-        print(content)
     # Here, should check with github action path
-    return content.startswith("/")
+    editable = content.startswith("/") or "import __editable__" in content
+    if editable:
+        print(content)
+    return content
 
 
 def find_pkg_name() -> str:
