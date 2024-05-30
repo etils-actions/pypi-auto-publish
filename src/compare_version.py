@@ -66,7 +66,7 @@ def _is_editable(dist: importlib.metadata.PathDistribution) -> bool:
     # Here, should check with github action path
     editable = content.startswith("/") or "import __editable__" in content
     if editable:
-        print(content)
+        print(f'{dist.name} is editable: {content}')
     return editable
 
 
