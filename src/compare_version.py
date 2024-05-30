@@ -67,7 +67,7 @@ def _is_editable(dist: importlib.metadata.PathDistribution) -> bool:
     editable = content.startswith("/") or "import __editable__" in content
     if editable:
         print(content)
-    return content
+    return editable
 
 
 def find_pkg_name() -> str:
