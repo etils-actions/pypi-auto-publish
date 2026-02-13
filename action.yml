@@ -14,8 +14,7 @@ inputs:
     description: 'Github action token. If missing, GitHub release is skipped.'
     required: false
   parse-changelog:
-    description: 'Parse the `CHANGELOG.md` (`keep a changelog`
- format).'
+    description: 'Parse the `CHANGELOG.md` (`keep a changelog` format).'
     required: false
     default: false
   pkg-name:
@@ -49,7 +48,7 @@ runs:
     # Setup Python
     - uses: actions/setup-python@v4
       with:
-        python-version: "3.11"
+        python-version: "3.12"
   
     - run: pip install -e .
       shell: bash
